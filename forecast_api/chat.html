@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizGrowAI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    .dashboard, .chatbox {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin-top: 12px;
+      padding: 10px 20px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    #chatMessages {
+      min-height: 200px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background-color: #f9fafb;
+    }
+    .user-msg {
+      text-align: right;
+      color: #0f172a;
+      font-weight: bold;
+    }
+    .bot-msg {
+      text-align: left;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 🧾 Dashboard -->
+    <div class="dashboard">
+      <h2>📊 BizGrowAI Dashboard</h2>
+      <label>Business Name:</label>
+      <input type="text" id="bizName" value="Varushni Ventures" />
+
+      <label>Industry:</label>
+      <input type="text" id="industry" value="Food & Catering" />
+
+      <label>Specialties:</label>
+      <input type="text" id="specialties" value="Korean, American, Italian" />
+
+      <button onclick="saveProfile()">💾 Save Profile</button>
+    </div>
+
+    <!-- 💬 Chatbot -->
+    <div class="chatbox">
+      <h2>🤖 My Chatbot</h2>
+      <div id="chatMessages"></div>
+      <input type="text" id="userInput" placeholder="Ask something..." onkeydown="handleKey(event)" />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Load saved dashboard
+    window.onload = function () {
+      document.getElementById("bizName").value = localStorage.getItem("bizName") || "Varushni Ventures";
+      document.getElementById("industry").value = localStorage.getItem("industry") || "Food & Catering";
+      document.getElementById("specialties").value = localStorage.getItem("specialties") || "Korean, American, Italian";
+    };
+
+    function saveProfile() {
+      localStorage.setItem("bizName", document.getElementById("bizName").value);
+      localStorage.setItem("industry", document.getElementById("industry").value);
+      localStorage.setItem("specialties", document.getElementById("specialties").value);
+      alert("✅ Business profile saved!");
+    }
+
+    function handleKey(e) {
+      if (e.key === "Enter") sendMessage();
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("userInput").value.trim();
+      if (!input) return;
+
+      const chatBox = document.getElementById("chatMessages");
+      chatBox.innerHTML += `<div class="user-msg">🧑‍💼 You: ${input}</div>`;
+
+      document.getElementById("userInput").value = "";
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: input }),
+        });
+
+        const data = await response.json();
+        const botMessage = data.response || "Sorry, I couldn't understand.";
+
+        chatBox.innerHTML += `<div class="bot-msg">🤖 BizGrowAI: ${botMessage}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      } catch (err) {
+        chatBox.innerHTML += `<div class="bot-msg">❌ Error: ${err.message}</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
