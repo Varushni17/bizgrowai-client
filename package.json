@@ -1,5 +1,5 @@
 {
-  "name": "bizgrowai-client",
+  "name":"bizgrowai_dashboard",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.7.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-speech-recognition": "^4.0.1",
     "recharts": "^3.1.0"
   },
